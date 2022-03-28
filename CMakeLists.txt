@@ -57,21 +57,22 @@ if(${UNITY_EXTENSION_MEMORY})
 endif()
 
 # Main target ------------------------------------------------------------------
-add_library(${PROJECT_NAME} STATIC)
-add_library(${PROJECT_NAME}::framework ALIAS ${PROJECT_NAME})
+set(LIBRARY_NAME ${PROJECT_NAME}_testing)
+add_library(${LIBRARY_NAME} STATIC)
+add_library(${LIBRARY_NAME}::framework ALIAS ${LIBRARY_NAME})
 
 # Includes ---------------------------------------------------------------------
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
-target_sources(${PROJECT_NAME}
+target_sources(${LIBRARY_NAME}
     PRIVATE
         src/unity.c
         $<$<BOOL:${UNITY_EXTENSION_FIXTURE_ENABLED}>:extras/fixture/src/unity_fixture.c>
         $<$<BOOL:${UNITY_EXTENSION_MEMORY_ENABLED}>:extras/memory/src/unity_memory.c>
 )
 
-target_include_directories(${PROJECT_NAME}
+target_include_directories(${LIBRARY_NAME}
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
@@ -88,7 +89,7 @@ set(${PROJECT_NAME}_PUBLIC_HEADERS
         $<$<BOOL:${UNITY_EXTENSION_MEMORY_ENABLED}>:${CMAKE_CURRENT_SOURCE_DIR}/extras/memory/src/unity_memory.h>
 )
 
-set_target_properties(${PROJECT_NAME}
+set_target_properties(${LIBRARY_NAME}
     PROPERTIES 
         C_STANDARD          11
         C_STANDARD_REQUIRED ON
@@ -97,7 +98,7 @@ set_target_properties(${PROJECT_NAME}
         EXPORT_NAME         framework
 )
 
-target_compile_options(${PROJECT_NAME}
+target_compile_options(${LIBRARY_NAME}
     PRIVATE
         # Clang
         $<$<C_COMPILER_ID:Clang>:
@@ -150,7 +151,7 @@ write_basic_package_version_file(${PROJECT_NAME}ConfigVersion.cmake
 )
 
 ## Target installation
-install(TARGETS   ${PROJECT_NAME}
+install(TARGETS   ${LIBRARY_NAME}
     EXPORT        ${PROJECT_NAME}Targets
     ARCHIVE       DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY       DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -160,7 +161,7 @@ install(TARGETS   ${PROJECT_NAME}
 
 ## Target's cmake files: targets export
 install(EXPORT  ${PROJECT_NAME}Targets
-    NAMESPACE   ${PROJECT_NAME}::
+    NAMESPACE   ${LIBRARY_NAME}::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
 
