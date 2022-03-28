@@ -56,6 +56,11 @@ if(${UNITY_EXTENSION_MEMORY})
     message(STATUS "Unity: Building with the memory extension.")
 endif()
 
+# Apply unity_config.h, if UNITY_CONFIG_DIR specified---------------------------
+if(UNITY_CONFIG_DIR)
+    add_definitions(-DUNITY_INCLUDE_CONFIG_H)
+endif()
+
 # Main target ------------------------------------------------------------------
 set(LIBRARY_NAME ${PROJECT_NAME}_testing)
 add_library(${LIBRARY_NAME} STATIC)
@@ -80,6 +85,9 @@ target_include_directories(${LIBRARY_NAME}
         $<BUILD_INTERFACE:$<$<BOOL:${UNITY_EXTENSION_MEMORY_ENABLED}>:${CMAKE_CURRENT_SOURCE_DIR}/extras/memory/src>>
         $<BUILD_INTERFACE:$<$<BOOL:${UNITY_EXTENSION_FIXTURE_ENABLED}>:${CMAKE_CURRENT_SOURCE_DIR}/extras/fixture/src>>
 )
+if(UNITY_CONFIG_DIR)
+    target_include_directories(${LIBRARY_NAME} PUBLIC "${UNITY_CONFIG_DIR}")
+endif()
 
 set(${PROJECT_NAME}_PUBLIC_HEADERS
         src/unity.h
